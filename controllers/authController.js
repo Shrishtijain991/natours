@@ -35,17 +35,39 @@ const createSendToken = (user, statusCode, req, res) => {
 exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await User.create({
     name: req.body.name,
+    role: req.body.role,
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
     passwordChangedAt: req.body.passwordChangedAt,
-    role: req.body.role,
   });
 
-  const url = `${req.protocol}://${req.get('host')}/me`;
-  await new Email(newUser, url).sendWelcome();
-
   createSendToken(newUser, 201, req, res);
+  //console.log(createdToken);
+
+  //email confirmation
+  // const confirmURL = `${req.protocol}://${req.get(
+  //   'host'
+  // )}/api/v1/users/confirm/${createdToken}`;
+  // await new Email(newUser, confirmURL).sendWelcome();
+
+  // try {
+  //   res.status(201).json({
+  //     status: 'success',
+  //     data: {
+  //       newUser,
+  //     },
+  //   });
+  // } catch (err) {
+  //   console.error(err);
+  //   return next(
+  //     new AppError(
+  //       'There was an error sending this email. Try again later!',
+  //       500
+  //     )
+  //   );
+  //return next(err);
+  // }
 });
 
 exports.login = catchAsync(async (req, res, next) => {
